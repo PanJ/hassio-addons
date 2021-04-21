@@ -1,6 +1,6 @@
 {
   "name": "Cloudflare Argo Tunnel",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "slug": "cloudflare-argo",
   "description": "Connect to Cloudflare Argo tunnel to expose Home Assistant to the internet.",
   "url": "https://github.com/PanJ/hassio-addons",
@@ -11,10 +11,10 @@
   "map": ["config:rw"],
   "options": {
     "credential_file_content": "{}",
-    "config_file_content": ""
+    "config_file_content_base64": ""
   },
   "schema": {
     "credential_file_content": "str",
-    "config_file_content": "str"
+    "config_file_content_base64": "str"
   }
 }
