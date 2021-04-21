@@ -1,0 +1,7 @@
+---
+channel: stable
+addons:
+  cloudflare_argo:
+    repository: hassio-addons/cloudflare_argo
+    target: cloudflare_argo
+    image: cloudflare_argo
