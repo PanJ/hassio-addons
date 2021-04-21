@@ -18,8 +18,7 @@ FROM $BUILD_FROM
 ARG GOLANG_VERSION
 ARG ALPINE_VERSION
 
-RUN adduser -S cloudflared; \
-  apk add --no-cache ca-certificates bind-tools libcap; \
+RUN apk add --no-cache ca-certificates bind-tools libcap; \
   rm -rf /var/cache/apk/*; \
   mkdir /etc/cloudflared;
 
@@ -28,7 +27,5 @@ COPY --from=gobuild /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared/cl
 
 COPY run.sh /
 RUN chmod a+x /run.sh
-
-USER cloudflared
 
 CMD [ "/run.sh" ]
