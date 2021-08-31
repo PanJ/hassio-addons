@@ -1,32 +1,19 @@
-ARG GOLANG_VERSION=1.17.0
-ARG ALPINE_VERSION=3.14
-ARG UPSTREAM_RELEASE_TAG=2021.8.6
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-FROM golang:${GOLANG_VERSION}-alpine${ALPINE_VERSION} as gobuild
-ARG GOLANG_VERSION
-ARG ALPINE_VERSION
-ARG UPSTREAM_RELEASE_TAG
+ARG BUILD_ARCH
+RUN \
+    CVERSION="latest/download" \
+    ARCH="${BUILD_ARCH}" \
+    && if [[ "${BUILD_ARCH}" = "aarch64" ]]; then ARCH="arm64"; fi \
+    && if [[ "${BUILD_ARCH}" = "amd64" ]]; then ARCH="amd64"; fi \
+    && if [[ "${BUILD_ARCH}" = "armhf" ]]; then ARCH="arm"; fi \
+    && if [[ "${BUILD_ARCH}" = "armv7" ]]; then ARCH="arm"; fi \
+    && if [[ "${BUILD_ARCH}" = "i386" ]]; then ARCH="386"; fi \
+    && apk add --no-cache libc6-compat yq \
+    && wget -O /usr/local/bin/cloudflared https://github.com/cloudflare/cloudflared/releases/$CVERSION/cloudflared-linux-$ARCH && chmod +x /usr/local/bin/cloudflared
 
-WORKDIR /tmp
-
-RUN apk add --no-cache git gcc build-base alpine-sdk curl tar && \
-    mkdir release && \
-    curl -L "https://github.com/cloudflare/cloudflared/archive/refs/tags/${UPSTREAM_RELEASE_TAG}.tar.gz" | tar xvz --strip 1 -C ./release
-
-WORKDIR /tmp/release/cmd/cloudflared
-
-RUN go build ./
-
-FROM alpine:${ALPINE_VERSION}
-
-ARG GOLANG_VERSION
-ARG ALPINE_VERSION
-
-RUN apk add --no-cache ca-certificates bind-tools libcap; \
-  rm -rf /var/cache/apk/*; \
-  mkdir /etc/cloudflared;
-
-COPY --from=gobuild /tmp/release/cmd/cloudflared/cloudflared /usr/local/bin/cloudflared
+RUN cloudflared -v
 
 COPY run.sh /
 RUN chmod a+x /run.sh
