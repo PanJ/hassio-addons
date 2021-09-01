@@ -12,7 +12,7 @@ tunnel: { UUID }
 credentials-file: /etc/cloudflared/credentials.json
 ingress:
   - hostname: { hostname }
-    service: http://localhost:8123
+    service: http://127.0.0.1:8123
   - service: http_status:404
 ```
 
