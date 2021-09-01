@@ -1,6 +1,7 @@
 ARG GOLANG_VERSION=1.17.0
 ARG ALPINE_VERSION=3.14
 ARG UPSTREAM_RELEASE_TAG=2021.8.6
+ARG BASHIO_VERSION=0.13.1
 
 FROM golang:${GOLANG_VERSION}-alpine${ALPINE_VERSION} as gobuild
 ARG GOLANG_VERSION
@@ -21,10 +22,18 @@ FROM alpine:${ALPINE_VERSION}
 
 ARG GOLANG_VERSION
 ARG ALPINE_VERSION
+ARG BASHIO_VERSION
 
-RUN apk add --no-cache ca-certificates bind-tools libcap; \
+RUN apk add --no-cache ca-certificates bind-tools curl jq libcap; \
   rm -rf /var/cache/apk/*; \
   mkdir /etc/cloudflared;
+  
+RUN mkdir -p /usr/src/bashio \
+&& curl -L -f -s "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
+  | tar -xzf - --strip 1 -C /usr/src/bashio \
+&& mv /usr/src/bashio/lib /usr/lib/bashio \
+&& ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
+&& rm -rf /usr/src/bashio
 
 COPY --from=gobuild /tmp/release/cmd/cloudflared/cloudflared /usr/local/bin/cloudflared
 
