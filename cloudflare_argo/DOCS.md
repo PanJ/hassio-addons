@@ -1,5 +1,7 @@
 # Cloudflare Argo Home Assistant Add-on
 
+# This repository is not maintained. Please consider alternative add-ons (https://github.com/paocloud/hass-cloudflare-argo)
+
 ## Configuration
 
 1. Setup Cloudflare Tunnel as indicated [here](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup)
